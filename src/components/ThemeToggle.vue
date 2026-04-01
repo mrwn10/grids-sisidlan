@@ -1,57 +1,101 @@
 <template>
-  <button
+  <button 
+    class="theme-toggle" 
+    :class="theme"
     @click="$emit('toggle-theme')"
-    class="fixed top-6 right-6 z-50 p-3 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-110 focus:outline-none"
-    :class="[
-      theme === 'dark' 
-        ? 'bg-white/10 hover:bg-white/20 border border-white/20' 
-        : 'bg-gray-800/10 hover:bg-gray-800/20 border border-gray-800/20'
-    ]"
-    aria-label="Toggle theme"
+    :title="theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
   >
-    <!-- Dark mode icon (moon) -->
-    <svg
-      v-if="theme === 'light'"
-      class="w-6 h-6 text-gray-800"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-      />
-    </svg>
-    <!-- Light mode icon (sun) -->
-    <svg
-      v-else
-      class="w-6 h-6 text-[#81ECFF]"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-      />
-    </svg>
+    <transition name="spin" mode="out-in">
+      <!-- Sun icon (shown in dark mode to switch to light) -->
+      <svg v-if="theme === 'dark'" key="sun" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <!-- Moon icon (shown in light mode to switch to dark) -->
+      <svg v-else key="moon" viewBox="0 0 24 24" fill="none">
+        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </transition>
   </button>
 </template>
 
 <script setup>
-// eslint-disable-next-line no-undef
 defineProps({
   theme: {
     type: String,
     required: true,
-    validator: (value) => ['light', 'dark'].includes(value)
+    validator: (value) => ['dark', 'light'].includes(value)
   }
 })
 
-// eslint-disable-next-line no-undef
 defineEmits(['toggle-theme'])
 </script>
+
+<style scoped>
+.theme-toggle {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode styles */
+.theme-toggle.dark {
+  background: rgba(31, 92, 46, 0.45);
+  border: 1px solid rgba(61, 216, 122, 0.4);
+  color: #3dd87a;
+}
+
+.theme-toggle.dark:hover {
+  background: rgba(31, 92, 46, 0.7);
+  border-color: rgba(61, 216, 122, 0.7);
+  transform: scale(1.1) rotate(15deg);
+  box-shadow: 0 4px 20px rgba(61, 216, 122, 0.4);
+}
+
+/* Light mode styles */
+.theme-toggle.light {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(31, 92, 46, 0.3);
+  color: #1f5c2e;
+}
+
+.theme-toggle.light:hover {
+  background: rgba(237, 255, 243, 0.95);
+  border-color: rgba(61, 216, 122, 0.5);
+  transform: scale(1.1) rotate(15deg);
+  box-shadow: 0 4px 20px rgba(61, 216, 122, 0.3);
+}
+
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Transition animations */
+.spin-enter-active,
+.spin-leave-active {
+  transition: all 0.25s ease;
+}
+
+.spin-enter-from {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+}
+
+.spin-leave-to {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.5);
+}
+</style>

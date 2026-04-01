@@ -1,6 +1,6 @@
 <template>
-  <div :class="theme === 'dark' ? 'dark' : ''" class="min-h-screen">
-    <div class="min-h-screen bg-background-light dark:bg-background-dark transition-colors duration-300">
+  <div :class="theme === 'dark' ? 'dark' : 'light'" class="login-container-wrapper">
+    <div class="min-h-screen">
       <ThemeToggle :theme="theme" @toggle-theme="toggleTheme" />
       <router-view />
     </div>
@@ -8,33 +8,47 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, provide } from 'vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 
-const theme = ref('dark') // Default to dark mode for LoginPage
+// Global theme state
+const theme = ref('dark')
 
 const toggleTheme = () => {
-  theme.value = theme.value === 'light' ? 'dark' : 'light'
+  theme.value = theme.value === 'dark' ? 'light' : 'dark'
   localStorage.setItem('theme', theme.value)
 }
 
+// Initialize theme from localStorage
 onMounted(() => {
   const savedTheme = localStorage.getItem('theme')
-  if (savedTheme) {
+  if (savedTheme && (savedTheme === 'dark' || savedTheme === 'light')) {
     theme.value = savedTheme
   }
 })
+
+// Provide theme to all child components
+provide('theme', theme)
 </script>
 
 <style>
-/* Import Space Grotesk font */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-
+/* Global styles that apply to all components */
 * {
-  font-family: 'Space Grotesk', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Smooth transitions for theme switching */
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+.login-container-wrapper {
+  min-height: 100vh;
+}
+
+/* Smooth transitions */
 * {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
