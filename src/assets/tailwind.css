@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+
+/* Custom theme classes for light mode */
+:root {
+  --bg-primary: #F0FDF4;
+  --text-primary: #14532D;
+  --header-bg: transparent;
+}
+
+/* Dark mode classes */
+.dark {
+  --bg-primary: #060E2A;
+  --text-primary: #81ECFF;
+  --header-bg: #091328;
+}
+
+/* Custom utility classes */
+.bg-background-light {
+  background-color: #F0FDF4;
+}
+
+.dark .bg-background-light {
+  background-color: #060E2A;
+}
+
+.bg-background-dark {
+  background-color: #060E2A;
+}
+
+.light .bg-background-dark {
+  background-color: #F0FDF4;
+}
+
+.text-primary-light {
+  color: #14532D;
+}
+
+.dark .text-primary-light {
+  color: #81ECFF;
+}
+
+/* You can add more custom classes as needed */
