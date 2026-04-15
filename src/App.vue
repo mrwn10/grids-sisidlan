@@ -1,7 +1,6 @@
 <template>
   <div :class="theme === 'dark' ? 'dark' : 'light'" class="login-container-wrapper">
     <div class="min-h-screen">
-      <ThemeToggle :theme="theme" @toggle-theme="toggleTheme" />
       <router-view />
     </div>
   </div>
@@ -9,7 +8,6 @@
 
 <script setup>
 import { ref, onMounted, provide } from 'vue'
-import ThemeToggle from './components/ThemeToggle.vue'
 
 // Global theme state
 const theme = ref('dark')
@@ -27,8 +25,9 @@ onMounted(() => {
   }
 })
 
-// Provide theme to all child components
+// Provide theme and toggleTheme to all child components
 provide('theme', theme)
+provide('toggleTheme', toggleTheme)
 </script>
 
 <style>

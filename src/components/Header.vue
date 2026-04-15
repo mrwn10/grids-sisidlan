@@ -7,6 +7,9 @@
           <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
       </button>
+      <div class="logo-mark">
+        <img :src="logoImage" alt="SISIDLAN Logo" class="logo-image" />
+      </div>
       <div class="page-title">
         <h2>{{ currentPageTitle }}</h2>
       </div>
@@ -67,6 +70,7 @@
 <script setup>
 import { ref, computed, inject } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import logoImage from '@/assets/images/logo.png'
 
 const props = defineProps({
   toggleSidebar: {
@@ -90,7 +94,6 @@ const currentPageTitle = computed(() => {
 })
 
 const toggleMobileMenu = () => {
-  // Emit event to parent to toggle mobile sidebar
   props.toggleSidebar()
 }
 
@@ -138,8 +141,9 @@ document.addEventListener('click', handleClickOutside)
 .dashboard-header {
   position: fixed;
   top: 0;
+  left: 0;
   right: 0;
-  left: 260px;
+  width: 100%;
   height: 70px;
   background: var(--card-bg);
   backdrop-filter: blur(28px) saturate(160%);
@@ -151,6 +155,7 @@ document.addEventListener('click', handleClickOutside)
   padding: 0 2rem;
   transition: left 0.3s ease;
   z-index: 999;
+  box-sizing: border-box;
 }
 
 .header-left {
@@ -177,6 +182,25 @@ document.addEventListener('click', handleClickOutside)
   width: 20px;
   height: 20px;
   color: var(--text-primary);
+}
+
+.logo-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1f5c2e, #3dd87a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 6px;
+  box-shadow: 0 2px 8px rgba(61, 216, 122, 0.25);
+}
+
+.logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .page-title h2 {
@@ -323,11 +347,15 @@ document.addEventListener('click', handleClickOutside)
 /* Responsive */
 @media (max-width: 768px) {
   .dashboard-header {
-    left: 0;
+    padding: 0 1rem;
   }
   
   .menu-toggle {
     display: flex;
+  }
+  
+  .logo-mark {
+    display: none;
   }
   
   .user-name,

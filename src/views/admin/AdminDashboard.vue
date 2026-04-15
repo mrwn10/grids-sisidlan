@@ -1,10 +1,9 @@
 <!-- views/admin/AdminDashboard.vue -->
 <template>
   <div class="admin-layout" :class="theme">
-    <Sidebar ref="sidebarRef" />
-    <Header :toggle-sidebar="toggleMobileSidebar" />
+    <Header />
     
-    <main class="main-content" :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
+    <main class="main-content">
       <div class="content-wrapper">
         <div class="bg-orb orb-1"></div>
         <div class="bg-orb orb-2"></div>
@@ -70,40 +69,11 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted, onUnmounted } from 'vue'
-import Sidebar from '@/components/Sidebar.vue'
+import { inject } from 'vue'
 import Header from '@/components/Header.vue'
 import logoImage from '@/assets/images/logo.png'
 
 const theme = inject('theme')
-const sidebarRef = ref(null)
-const isSidebarCollapsed = ref(false)
-
-// Listen for sidebar collapse state from Sidebar component
-onMounted(() => {
-  if (sidebarRef.value) {
-    // Watch for collapse state changes
-    const observer = new MutationObserver(() => {
-      const sidebar = document.querySelector('.sidebar')
-      if (sidebar) {
-        isSidebarCollapsed.value = sidebar.classList.contains('collapsed')
-      }
-    })
-    
-    observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class'] })
-    
-    onUnmounted(() => {
-      observer.disconnect()
-    })
-  }
-})
-
-const toggleMobileSidebar = () => {
-  const sidebar = document.querySelector('.sidebar')
-  if (sidebar) {
-    sidebar.classList.toggle('mobile-open')
-  }
-}
 </script>
 
 <style scoped>
@@ -158,15 +128,9 @@ const toggleMobileSidebar = () => {
 }
 
 .main-content {
-  margin-left: 260px;
   margin-top: 70px;
-  transition: margin-left 0.3s ease;
   position: relative;
   min-height: calc(100vh - 70px);
-}
-
-.main-content.sidebar-collapsed {
-  margin-left: 80px;
 }
 
 .content-wrapper {
@@ -361,10 +325,6 @@ const toggleMobileSidebar = () => {
 
 /* Responsive */
 @media (max-width: 768px) {
-  .main-content {
-    margin-left: 0;
-  }
-  
   .content-wrapper {
     padding: 1rem;
   }

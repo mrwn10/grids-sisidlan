@@ -4,6 +4,11 @@
     <div class="bg-orb orb-2"></div>
     <div class="bg-orb orb-3"></div>
 
+    <!-- Theme Toggle - Now outside login-card, positioned globally -->
+    <div class="theme-toggle-global">
+      <ThemeToggle :theme="theme" @toggle-theme="toggleTheme" />
+    </div>
+
     <div class="login-card">
       <div class="card-grid"></div>
 
@@ -137,10 +142,12 @@
 import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import LoadingScreen from '@/components/LoadingScreen.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 import logoImage from '@/assets/images/logo.png'
 
 // Inject global theme from App.vue
 const theme = inject('theme')
+const toggleTheme = inject('toggleTheme')
 
 const router = useRouter()
 const form = ref({ email: '', password: '' })
@@ -201,9 +208,7 @@ const setCredentials = (email, password) => {
 </script>
 
 <style scoped>
-/* ═══════════════════════════════════════
-   CSS VARIABLES — DARK MODE (default)
-═══════════════════════════════════════ */
+/* CSS VARIABLES remain the same as before */
 .dark {
   --bg: #0e160f;
   --orb1: rgba(31, 92, 46, 0.5);
@@ -234,9 +239,6 @@ const setCredentials = (email, password) => {
   --toggle-hover: rgba(31, 92, 46, 0.55);
 }
 
-/* ═══════════════════════════════════════
-   CSS VARIABLES — LIGHT MODE
-═══════════════════════════════════════ */
 .light {
   --bg: #f0faf2;
   --orb1: rgba(31, 92, 46, 0.12);
@@ -267,7 +269,6 @@ const setCredentials = (email, password) => {
   --toggle-hover: rgba(237, 255, 243, 0.95);
 }
 
-/* Apply theme variables to container */
 .login-container {
   min-height: 100vh;
   display: flex;
@@ -278,6 +279,14 @@ const setCredentials = (email, password) => {
   position: relative;
   overflow: hidden;
   transition: background 0.4s ease;
+}
+
+/* Global Theme Toggle - positioned relative to the page */
+.theme-toggle-global {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 1000;
 }
 
 /* Orbs */
@@ -402,7 +411,6 @@ const setCredentials = (email, password) => {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  /* No filters - logo appears in its original form */
 }
 
 .login-header h1 {
@@ -526,7 +534,6 @@ const setCredentials = (email, password) => {
   height: 17px;
 }
 
-/* Button */
 .login-btn {
   margin-top: 0.5rem;
   width: 100%;
@@ -625,7 +632,6 @@ const setCredentials = (email, password) => {
   }
 }
 
-/* Error */
 .error-message {
   display: flex;
   align-items: center;
@@ -644,7 +650,6 @@ const setCredentials = (email, password) => {
   flex-shrink: 0;
 }
 
-/* Demo notes */
 .demo-notes {
   margin-top: 1.75rem;
 }
@@ -768,7 +773,6 @@ const setCredentials = (email, password) => {
   transform: translateX(2px);
 }
 
-/* Transitions */
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.3s ease;
@@ -788,6 +792,11 @@ const setCredentials = (email, password) => {
   .logo-mark {
     width: 70px;
     height: 70px;
+  }
+  
+  .theme-toggle-global {
+    top: 1rem;
+    right: 1rem;
   }
 }
 </style>
