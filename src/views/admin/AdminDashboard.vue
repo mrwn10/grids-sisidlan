@@ -9,20 +9,45 @@
         <div class="bg-orb orb-2"></div>
         <div class="bg-orb orb-3"></div>
 
-        <div class="dashboard-card">
-          <div class="card-grid"></div>
-
-          <!-- Changed from dashboard-header to dashboard-title-section -->
-          <div class="dashboard-title-section">
+        <!-- Workspace Section -->
+        <div class="workspace-section">
+          <div class="workspace-header">
             <div class="logo-mark">
               <img :src="logoImage" alt="SISIDLAN Logo" class="logo-image" />
             </div>
-            <h1>ADMIN DASHBOARD</h1>
-            <p class="welcome-text">Welcome back, Administrator!</p>
+            <h1>WORKSPACE</h1>
+            <h2 class="workspace-subtitle">Dashboard</h2>
+            <p class="workspace-description">Overview of inventory health, requests, approvals, and system readiness.</p>
           </div>
 
-          <div class="dashboard-content">
-            <div class="stats-grid">
+          <!-- Stats Grids -->
+          <div class="stats-container">
+            <!-- Row 1: Quick Stats -->
+            <div class="stats-row">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 8v4l3 3M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <h3>Notifications</h3>
+                  <p class="stat-value">12</p>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M22 12h-4l-3 9-4-18-3 9H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <h3>Pending Requests</h3>
+                  <p class="stat-value">0</p>
+                </div>
+              </div>
+
               <div class="stat-card">
                 <div class="stat-icon">
                   <svg viewBox="0 0 24 24" fill="none">
@@ -31,25 +56,18 @@
                   </svg>
                 </div>
                 <div class="stat-info">
-                  <h3>Active Sessions</h3>
-                  <p>1</p>
+                  <h3>Low Stock</h3>
+                  <p class="stat-value">3</p>
                 </div>
               </div>
+            </div>
 
-              <div class="stat-card">
-                <div class="stat-icon">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/>
-                  </svg>
-                </div>
-                <div class="stat-info">
-                  <h3>System Status</h3>
-                  <p>Operational</p>
-                </div>
-              </div>
-
-              <div class="stat-card">
+            <!-- Row 2: Inventory Section -->
+            <div class="section-title">
+              <h3>Inventory Overview</h3>
+            </div>
+            <div class="stats-row">
+              <div class="stat-card inventory-card">
                 <div class="stat-icon">
                   <svg viewBox="0 0 24 24" fill="none">
                     <rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
@@ -57,8 +75,74 @@
                   </svg>
                 </div>
                 <div class="stat-info">
-                  <h3>Database</h3>
-                  <p>Connected</p>
+                  <h3>Inventory</h3>
+                  <p class="stat-value-large">8</p>
+                  <p class="stat-label">Total Items</p>
+                  <p class="stat-description">Combined inventory item records from supplies and equipment.</p>
+                </div>
+              </div>
+
+              <div class="stat-card warning-card">
+                <div class="stat-icon warning-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 8v4m0 4h.01M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <h3>Warning</h3>
+                  <p class="stat-value-large">3</p>
+                  <p class="stat-label">Low Stock</p>
+                  <p class="stat-description">Items currently at or below the low-stock threshold.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 3: Workflow Section -->
+            <div class="section-title">
+              <h3>Workflow Management</h3>
+            </div>
+            <div class="stats-row">
+              <div class="stat-card workflow-card">
+                <div class="stat-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M12 12v4m0 0l-2-2m2 2l2-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <h3>Workflow</h3>
+                  <p class="stat-value-large">0</p>
+                  <p class="stat-label">Pending Requests</p>
+                  <p class="stat-description">Requests waiting for admin or project manager action.</p>
+                </div>
+              </div>
+
+              <div class="stat-card success-card">
+                <div class="stat-icon success-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <h3>Decisions</h3>
+                  <p class="stat-value-large">0</p>
+                  <p class="stat-label">Approved Requests</p>
+                  <p class="stat-description">Notifications generated after request approval.</p>
+                </div>
+              </div>
+
+              <div class="stat-card danger-card">
+                <div class="stat-icon danger-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m-6 6a9 9 0 1 1 0-18 9 9 0 0 1 0 18z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <h3>Decisions</h3>
+                  <p class="stat-value-large">0</p>
+                  <p class="stat-label">Rejected Requests</p>
+                  <p class="stat-description">Notifications generated after request rejection.</p>
                 </div>
               </div>
             </div>
@@ -97,6 +181,13 @@ const theme = inject('theme')
   --stat-bg: rgba(31, 92, 46, 0.22);
   --stat-border: rgba(61, 216, 122, 0.14);
   --stat-hover-bg: rgba(31, 92, 46, 0.32);
+  --warning-bg: rgba(255, 193, 7, 0.12);
+  --warning-border: rgba(255, 193, 7, 0.25);
+  --success-bg: rgba(40, 167, 69, 0.12);
+  --success-border: rgba(40, 167, 69, 0.25);
+  --danger-bg: rgba(220, 53, 69, 0.12);
+  --danger-border: rgba(220, 53, 69, 0.25);
+  --section-title: rgba(61, 216, 122, 0.6);
 }
 
 /* ═══════════════════════════════════════
@@ -118,41 +209,47 @@ const theme = inject('theme')
   --stat-bg: rgba(237, 255, 243, 0.6);
   --stat-border: rgba(31, 92, 46, 0.12);
   --stat-hover-bg: rgba(237, 255, 243, 0.95);
+  --warning-bg: rgba(255, 193, 7, 0.08);
+  --warning-border: rgba(255, 193, 7, 0.2);
+  --success-bg: rgba(40, 167, 69, 0.08);
+  --success-border: rgba(40, 167, 69, 0.2);
+  --danger-bg: rgba(220, 53, 69, 0.08);
+  --danger-border: rgba(220, 53, 69, 0.2);
+  --section-title: rgba(31, 92, 46, 0.7);
 }
 
 .admin-layout {
   min-height: 100vh;
   background: var(--bg);
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
   transition: background 0.4s ease;
 }
 
 .main-content {
-  margin-top: 70px;
+  margin-top: 130px; /* 70px header + 60px navbar */
   position: relative;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh - 130px);
   width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .content-wrapper {
   padding: 2rem;
   position: relative;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh - 130px);
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* Orbs */
 .bg-orb {
-  position: absolute;
+  position: fixed;
   border-radius: 50%;
   filter: blur(80px);
   pointer-events: none;
   transition: background 0.4s ease;
+  z-index: 0;
 }
 
 .orb-1 {
@@ -200,37 +297,27 @@ const theme = inject('theme')
   70% { transform: translate(-9px, 9px) scale(0.97); }
 }
 
-/* Glass Card */
-.dashboard-card {
+/* Workspace Section */
+.workspace-section {
   position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
   background: var(--card-bg);
   backdrop-filter: blur(28px) saturate(160%);
   -webkit-backdrop-filter: blur(28px) saturate(160%);
   border: 1px solid var(--card-border);
-  border-radius: 24px;
-  padding: 2.5rem 2.25rem;
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
+  border-radius: 32px;
+  padding: 2.5rem;
   box-shadow: var(--card-shadow), 0 0 0 1px var(--card-inset) inset;
-  overflow: hidden;
-  transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
+  transition: all 0.4s ease;
 }
 
-.card-grid {
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-/* Changed from .dashboard-header to .dashboard-title-section */
-.dashboard-title-section {
+.workspace-header {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid var(--card-border);
 }
 
 .logo-mark {
@@ -242,7 +329,7 @@ const theme = inject('theme')
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.5rem;
-  box-shadow: 0 8px 28px rgba(61, 216, 122, 0.35), 0 0 0 1px rgba(237, 255, 243, 0.1) inset;
+  box-shadow: 0 8px 28px rgba(61, 216, 122, 0.35);
   overflow: hidden;
   padding: 16px;
 }
@@ -253,52 +340,74 @@ const theme = inject('theme')
   object-fit: contain;
 }
 
-.dashboard-title-section h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: 6px;
+.workspace-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: 8px;
   color: var(--text-primary);
-  text-shadow: 0 0 40px rgba(61, 216, 122, 0.2);
   margin-bottom: 0.5rem;
-  transition: color 0.3s;
+  text-shadow: 0 0 40px rgba(61, 216, 122, 0.2);
 }
 
-.welcome-text {
-  font-size: 0.9rem;
+.workspace-subtitle {
+  font-size: 1.5rem;
+  font-weight: 600;
   color: var(--text-secondary);
-  letter-spacing: 0.5px;
-  transition: color 0.3s;
+  margin-bottom: 0.75rem;
 }
 
-/* Dashboard Content */
-.dashboard-content {
+.workspace-description {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Stats Container */
+.stats-container {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.5rem;
 }
 
-.stats-grid {
+.section-title {
+  margin-bottom: 0.5rem;
+}
+
+.section-title h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--section-title);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-left: 4px solid #3dd87a;
+  padding-left: 1rem;
+}
+
+.stats-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
 }
 
+/* Stat Cards */
 .stat-card {
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.25rem;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 1.5rem;
   background: var(--stat-bg);
   border: 1px solid var(--stat-border);
   border-radius: 20px;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .stat-card:hover {
+  transform: translateY(-4px);
   background: var(--stat-hover-bg);
   border-color: rgba(61, 216, 122, 0.4);
-  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .stat-icon {
@@ -313,49 +422,132 @@ const theme = inject('theme')
   height: 100%;
 }
 
+.stat-info {
+  flex: 1;
+}
+
 .stat-info h3 {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-secondary);
   letter-spacing: 1px;
   text-transform: uppercase;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.5rem;
 }
 
-.stat-info p {
-  font-size: 1.5rem;
+.stat-value {
+  font-size: 2rem;
   font-weight: 700;
   color: var(--text-primary);
+  margin: 0;
 }
 
-/* Responsive */
+.stat-value-large {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0.25rem 0;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.stat-description {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-top: 0.5rem;
+}
+
+/* Inventory Card */
+.inventory-card {
+  background: var(--stat-bg);
+}
+
+/* Warning Card */
+.warning-card {
+  background: var(--warning-bg);
+  border-color: var(--warning-border);
+}
+
+.warning-icon {
+  color: #ffc107;
+}
+
+/* Success Card */
+.success-card {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+}
+
+.success-icon {
+  color: #28a745;
+}
+
+/* Danger Card */
+.danger-card {
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+}
+
+.danger-icon {
+  color: #dc3545;
+}
+
+/* Workflow Card */
+.workflow-card {
+  background: var(--stat-bg);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .workspace-section {
+    padding: 2rem;
+  }
+  
+  .stats-row {
+    gap: 1rem;
+  }
+}
+
 @media (max-width: 768px) {
   .content-wrapper {
+    padding: 1rem;
+  }
+  
+  .workspace-section {
     padding: 1.5rem;
   }
   
-  .dashboard-card {
-    padding: 1.5rem;
-    max-width: 100%;
-  }
-  
-  .logo-mark {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .dashboard-title-section h1 {
-    font-size: 1.5rem;
+  .workspace-header h1 {
+    font-size: 1.75rem;
     letter-spacing: 4px;
   }
   
-  .stats-grid {
+  .workspace-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .workspace-description {
+    font-size: 0.85rem;
+  }
+  
+  .logo-mark {
+    width: 70px;
+    height: 70px;
+    padding: 12px;
+  }
+  
+  .stats-row {
     grid-template-columns: 1fr;
-    gap: 1rem;
   }
   
   .stat-card {
-    padding: 1rem;
+    padding: 1.25rem;
   }
   
   .stat-icon {
@@ -363,18 +555,26 @@ const theme = inject('theme')
     height: 40px;
   }
   
-  .stat-info p {
-    font-size: 1.25rem;
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  
+  .stat-value-large {
+    font-size: 2rem;
+  }
+  
+  .section-title h3 {
+    font-size: 1rem;
   }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-  .dashboard-card {
-    max-width: 700px;
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
   }
   
-  .stats-grid {
-    gap: 1rem;
+  .stats-row:first-child {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 </style>

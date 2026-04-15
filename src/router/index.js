@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginPage from '../views/LoginPage.vue'
 import AdminDashboard from '../views/admin/AdminDashboard.vue'
+import ScanQR from '../views/admin/ScanQR.vue'
 
 const routes = [
   {
@@ -12,6 +13,12 @@ const routes = [
     path: '/admin-dashboard',
     name: 'AdminDashboard',
     component: AdminDashboard,
+    meta: { requiresAuth: true, role: 'admin' }
+  },
+  {
+    path: '/admin/scan-qr',
+    name: 'ScanQR',
+    component: ScanQR,
     meta: { requiresAuth: true, role: 'admin' }
   }
 ]

@@ -15,6 +15,8 @@
   },
   "exclude": [
     "**/Sidebar.vue",
+    "**/TutorialToggle.vue",
+    "**/AdminNavbar.vue",
     "node_modules",
     "dist"
   ]
