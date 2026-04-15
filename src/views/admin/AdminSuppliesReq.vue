@@ -93,7 +93,9 @@
               <thead>
                 <tr>
                   <th>ID</th>
+                  <th>Location</th>
                   <th>Item Name</th>
+                  <th>Brand</th>
                   <th>Quantity</th>
                   <th>Requested By</th>
                   <th>Date</th>
@@ -104,7 +106,9 @@
               <tbody>
                 <tr v-for="request in filteredRequests" :key="request.id">
                   <td class="request-id">#{{ request.id }}</td>
+                  <td>{{ request.location }}</td>
                   <td>{{ request.itemName }}</td>
+                  <td>{{ request.brand }}</td>
                   <td>{{ request.quantity }} pcs</td>
                   <td>{{ request.requestedBy }}</td>
                   <td>{{ formatDate(request.date) }}</td>
@@ -133,7 +137,7 @@
                   </td>
                 </tr>
                 <tr v-if="filteredRequests.length === 0">
-                  <td colspan="7" class="empty-state">
+                  <td colspan="9" class="empty-state">
                     <p>No requests found</p>
                   </td>
                 </tr>
@@ -152,18 +156,99 @@
           <button class="close-btn" @click="closeModal">×</button>
         </div>
         <div class="modal-body">
+          <!-- Location Dropdown (Required First) -->
           <div class="form-group">
-            <label>Item Name</label>
-            <input type="text" v-model="form.itemName" placeholder="Enter item name" />
+            <label>Location <span class="required">*</span></label>
+            <div class="combobox">
+              <input 
+                type="text"
+                v-model="locationSearch"
+                @input="filterLocations"
+                @focus="showLocationDropdown = true"
+                @blur="handleLocationBlur"
+                placeholder="Select or type location..."
+                class="combobox-input"
+              />
+              <div v-if="showLocationDropdown && filteredLocations.length > 0" class="combobox-dropdown">
+                <div
+                  v-for="location in filteredLocations"
+                  :key="location"
+                  class="combobox-item"
+                  @mousedown.prevent="selectLocation(location)"
+                >
+                  {{ location }}
+                </div>
+              </div>
+            </div>
           </div>
+
+          <!-- Item Name Dropdown with Search -->
           <div class="form-group">
-            <label>Quantity</label>
+            <label>Item Name <span class="required">*</span></label>
+            <div class="combobox">
+              <input 
+                type="text"
+                v-model="itemSearch"
+                @input="filterItems"
+                @focus="showItemDropdown = true"
+                @blur="handleItemBlur"
+                placeholder="Select or type item..."
+                class="combobox-input"
+              />
+              <div v-if="showItemDropdown && filteredItems.length > 0" class="combobox-dropdown">
+                <div
+                  v-for="item in filteredItems"
+                  :key="item.name"
+                  class="combobox-item"
+                  @mousedown.prevent="selectItem(item)"
+                >
+                  {{ item.name }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Brand Dropdown with Search (Filtered by selected item) -->
+          <div class="form-group">
+            <label>Brand <span class="required">*</span></label>
+            <div class="combobox">
+              <input 
+                type="text"
+                v-model="brandSearch"
+                @input="filterBrands"
+                @focus="showBrandDropdown = true"
+                @blur="handleBrandBlur"
+                placeholder="Select or type brand..."
+                :disabled="!form.itemName"
+                class="combobox-input"
+              />
+              <div v-if="showBrandDropdown && filteredBrands.length > 0" class="combobox-dropdown">
+                <div
+                  v-for="brand in filteredBrands"
+                  :key="brand"
+                  class="combobox-item"
+                  @mousedown.prevent="selectBrand(brand)"
+                >
+                  {{ brand }}
+                </div>
+              </div>
+            </div>
+            <small v-if="!form.itemName" class="form-hint">Please select an item first</small>
+          </div>
+
+          <!-- Quantity -->
+          <div class="form-group">
+            <label>Quantity <span class="required">*</span></label>
             <input type="number" v-model="form.quantity" placeholder="Enter quantity" min="1" />
           </div>
+
+          <!-- Requested By -->
           <div class="form-group">
-            <label>Requested By</label>
+            <label>Requested By <span class="required">*</span></label>
             <input type="text" v-model="form.requestedBy" placeholder="Your name" />
           </div>
+
+          <!-- Status (Admin only) -->
           <div class="form-group">
             <label>Status</label>
             <select v-model="form.status">
@@ -183,7 +268,7 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from 'vue'
+import { ref, computed, inject, watch } from 'vue'
 import Header from '@/components/Header.vue'
 import logoImage from '@/assets/images/logo.png'
 
@@ -195,19 +280,184 @@ const showModal = ref(false)
 const isEditing = ref(false)
 const currentId = ref(null)
 
+// Combobox states
+const locationSearch = ref('')
+const showLocationDropdown = ref(false)
+const itemSearch = ref('')
+const showItemDropdown = ref(false)
+const brandSearch = ref('')
+const showBrandDropdown = ref(false)
+
 // Form data
 const form = ref({
+  location: '',
   itemName: '',
+  brand: '',
   quantity: 1,
   requestedBy: '',
   status: 'pending'
 })
 
-// Sample data
+// Data Definitions
+const locations = [
+  'Admin Office',
+  '4th Floor',
+  '3rd Floor',
+  '2nd Floor'
+]
+
+const suppliesItems = [
+  { name: 'Bond Paper', brands: ['Hardcopy', 'PaperOne', 'Xerox', 'Double A'] },
+  { name: 'Ballpen', brands: ['Flexstick', 'Panda', 'Faber-Castell', 'Pilot', 'Dong-A'] },
+  { name: 'Pencil', brands: ['Mongol', 'Faber-Castell', 'Staedtler', 'Pilot'] },
+  { name: 'Marker', brands: ['Pentel', 'Sharpie', 'Pilot', 'Zebra'] },
+  { name: 'Whiteboard Marker', brands: ['Pentel', 'Expo', 'Artline', 'Pilot'] },
+  { name: 'Eraser', brands: ['Faber-Castell', 'Pentel', 'Mongol', 'Staedtler'] },
+  { name: 'Ruler', brands: ['Staedtler', 'C-Thru', 'Westcott', 'Maped'] },
+  { name: 'Scissors', brands: ['Fiskars', 'Kai', 'Scotch', 'Westcott'] },
+  { name: 'Stapler', brands: ['Swingline', 'PaperPro', 'Rapid', 'Max'] },
+  { name: 'Staple Wire', brands: ['Swingline', 'Rapid', 'Max', 'Bostitch'] },
+  { name: 'Paper Clip', brands: ['Universal', 'ACCO', 'Swingline', 'Bostitch'] },
+  { name: 'Folder', brands: ['Del Rey', 'Jac Paper', 'Oxford', 'Smead'] },
+  { name: 'Envelope', brands: ['Del Rey', 'Jac Paper', 'Express', 'Kraft'] },
+  { name: 'Correction Tape', brands: ['Tombow', 'Pentel', 'BIC', 'Scotch'] },
+  { name: 'Glue Stick', brands: ['Elmers', 'Pritt', 'Scotch', 'UHU'] },
+  { name: 'Tape Dispenser', brands: ['Scotch', 'Swingline', 'Bostitch', '3M'] },
+  { name: 'Masking Tape', brands: ['3M', 'Scotch', 'T-Rex', 'Duck'] },
+  { name: 'Post-it Notes', brands: ['3M', 'Post-it', 'Stickies', 'Office Depot'] },
+  { name: 'Index Card', brands: ['Oxford', 'Rite in the Rain', 'National', 'Universal'] },
+  { name: 'Notebook', brands: ['National', 'Victory', 'Mead', 'Oxford'] }
+]
+
+// Filtered lists for comboboxes
+const filteredLocations = ref([...locations])
+
+const filteredItems = ref([...suppliesItems])
+
+const filteredBrands = ref([])
+
+// Update available brands based on selected item
+watch(() => form.value.itemName, (newItemName) => {
+  if (newItemName) {
+    const selectedItem = suppliesItems.find(item => item.name === newItemName)
+    if (selectedItem) {
+      filteredBrands.value = [...selectedItem.brands]
+      // Clear brand if current brand isn't in the new list
+      if (!selectedItem.brands.includes(form.value.brand)) {
+        form.value.brand = ''
+        brandSearch.value = ''
+      }
+    } else {
+      filteredBrands.value = []
+    }
+  } else {
+    filteredBrands.value = []
+  }
+})
+
+// Filter locations based on search
+const filterLocations = () => {
+  const search = locationSearch.value.toLowerCase()
+  filteredLocations.value = locations.filter(loc => 
+    loc.toLowerCase().includes(search)
+  )
+  showLocationDropdown.value = true
+}
+
+// Filter items based on search
+const filterItems = () => {
+  const search = itemSearch.value.toLowerCase()
+  filteredItems.value = suppliesItems.filter(item => 
+    item.name.toLowerCase().includes(search)
+  )
+  showItemDropdown.value = true
+}
+
+// Filter brands based on search
+const filterBrands = () => {
+  if (!form.value.itemName) return
+  const selectedItem = suppliesItems.find(item => item.name === form.value.itemName)
+  if (selectedItem) {
+    const search = brandSearch.value.toLowerCase()
+    filteredBrands.value = selectedItem.brands.filter(brand => 
+      brand.toLowerCase().includes(search)
+    )
+    showBrandDropdown.value = true
+  }
+}
+
+// Selection handlers
+const selectLocation = (location) => {
+  form.value.location = location
+  locationSearch.value = location
+  showLocationDropdown.value = false
+}
+
+const selectItem = (item) => {
+  form.value.itemName = item.name
+  itemSearch.value = item.name
+  showItemDropdown.value = false
+  // Reset brand when item changes
+  form.value.brand = ''
+  brandSearch.value = ''
+}
+
+const selectBrand = (brand) => {
+  form.value.brand = brand
+  brandSearch.value = brand
+  showBrandDropdown.value = false
+}
+
+// Blur handlers with delay to allow click events
+const handleLocationBlur = () => {
+  setTimeout(() => {
+    showLocationDropdown.value = false
+    // If no location selected, clear the search
+    if (!locations.includes(locationSearch.value)) {
+      if (form.value.location) {
+        locationSearch.value = form.value.location
+      } else {
+        locationSearch.value = ''
+      }
+    }
+  }, 200)
+}
+
+const handleItemBlur = () => {
+  setTimeout(() => {
+    showItemDropdown.value = false
+    // If no item selected, clear the search
+    const itemExists = suppliesItems.some(item => item.name === itemSearch.value)
+    if (!itemExists && !form.value.itemName) {
+      itemSearch.value = ''
+    } else if (form.value.itemName && !itemExists) {
+      itemSearch.value = form.value.itemName
+    }
+  }, 200)
+}
+
+const handleBrandBlur = () => {
+  setTimeout(() => {
+    showBrandDropdown.value = false
+    // If no brand selected and item exists, clear the search
+    if (form.value.itemName) {
+      const selectedItem = suppliesItems.find(item => item.name === form.value.itemName)
+      if (selectedItem && !selectedItem.brands.includes(brandSearch.value) && !form.value.brand) {
+        brandSearch.value = ''
+      } else if (form.value.brand && !selectedItem?.brands.includes(brandSearch.value)) {
+        brandSearch.value = form.value.brand
+      }
+    }
+  }, 200)
+}
+
+// Sample data with new fields
 const requests = ref([
   {
     id: 1,
-    itemName: 'Notebooks',
+    location: 'Admin Office',
+    itemName: 'Bond Paper',
+    brand: 'Hardcopy',
     quantity: 50,
     requestedBy: 'John Doe',
     date: new Date(2024, 0, 15),
@@ -215,7 +465,9 @@ const requests = ref([
   },
   {
     id: 2,
-    itemName: 'Ballpens',
+    location: '4th Floor',
+    itemName: 'Ballpen',
+    brand: 'Flexstick',
     quantity: 100,
     requestedBy: 'Jane Smith',
     date: new Date(2024, 0, 16),
@@ -223,11 +475,23 @@ const requests = ref([
   },
   {
     id: 3,
-    itemName: 'Whiteboard Markers',
+    location: '2nd Floor',
+    itemName: 'Whiteboard Marker',
+    brand: 'Pentel',
     quantity: 20,
     requestedBy: 'Mike Johnson',
     date: new Date(2024, 0, 17),
     status: 'rejected'
+  },
+  {
+    id: 4,
+    location: '3rd Floor',
+    itemName: 'Pencil',
+    brand: 'Mongol',
+    quantity: 200,
+    requestedBy: 'Sarah Williams',
+    date: new Date(2024, 0, 18),
+    status: 'approved'
   }
 ])
 
@@ -239,13 +503,15 @@ const stats = computed(() => ({
   rejected: requests.value.filter(r => r.status === 'rejected').length
 }))
 
-// Filtered requests
+// Filtered requests for table
 const filteredRequests = computed(() => {
   if (!searchQuery.value) return requests.value
   const query = searchQuery.value.toLowerCase()
   return requests.value.filter(r => 
     r.itemName.toLowerCase().includes(query) ||
     r.requestedBy.toLowerCase().includes(query) ||
+    r.location.toLowerCase().includes(query) ||
+    r.brand.toLowerCase().includes(query) ||
     r.id.toString().includes(query)
   )
 })
@@ -263,11 +529,19 @@ const openRequestModal = () => {
   isEditing.value = false
   currentId.value = null
   form.value = {
+    location: '',
     itemName: '',
+    brand: '',
     quantity: 1,
     requestedBy: '',
     status: 'pending'
   }
+  locationSearch.value = ''
+  itemSearch.value = ''
+  brandSearch.value = ''
+  showLocationDropdown.value = false
+  showItemDropdown.value = false
+  showBrandDropdown.value = false
   showModal.value = true
 }
 
@@ -275,17 +549,27 @@ const editRequest = (request) => {
   isEditing.value = true
   currentId.value = request.id
   form.value = {
+    location: request.location,
     itemName: request.itemName,
+    brand: request.brand,
     quantity: request.quantity,
     requestedBy: request.requestedBy,
     status: request.status
   }
+  locationSearch.value = request.location
+  itemSearch.value = request.itemName
+  brandSearch.value = request.brand
   showModal.value = true
 }
 
 const viewRequest = (request) => {
-  // View logic - can be expanded
-  alert(`Request #${request.id}\nItem: ${request.itemName}\nQuantity: ${request.quantity}\nRequested by: ${request.requestedBy}\nStatus: ${request.status}`)
+  alert(`Request #${request.id}
+Location: ${request.location}
+Item: ${request.itemName}
+Brand: ${request.brand}
+Quantity: ${request.quantity}
+Requested by: ${request.requestedBy}
+Status: ${request.status}`)
 }
 
 const deleteRequest = (request) => {
@@ -298,8 +582,25 @@ const deleteRequest = (request) => {
 }
 
 const saveRequest = () => {
-  if (!form.value.itemName || !form.value.quantity || !form.value.requestedBy) {
-    alert('Please fill all fields')
+  // Validation
+  if (!form.value.location) {
+    alert('Please select a location')
+    return
+  }
+  if (!form.value.itemName) {
+    alert('Please select an item name')
+    return
+  }
+  if (!form.value.brand) {
+    alert('Please select a brand')
+    return
+  }
+  if (!form.value.quantity || form.value.quantity < 1) {
+    alert('Please enter a valid quantity')
+    return
+  }
+  if (!form.value.requestedBy) {
+    alert('Please enter your name')
     return
   }
 
@@ -308,7 +609,9 @@ const saveRequest = () => {
     if (index !== -1) {
       requests.value[index] = {
         ...requests.value[index],
+        location: form.value.location,
         itemName: form.value.itemName,
+        brand: form.value.brand,
         quantity: form.value.quantity,
         requestedBy: form.value.requestedBy,
         status: form.value.status
@@ -320,7 +623,9 @@ const saveRequest = () => {
       : 1
     requests.value.push({
       id: newId,
+      location: form.value.location,
       itemName: form.value.itemName,
+      brand: form.value.brand,
       quantity: form.value.quantity,
       requestedBy: form.value.requestedBy,
       date: new Date(),
@@ -338,6 +643,88 @@ const closeModal = () => {
 </script>
 
 <style scoped>
+/* Add required field styling */
+.required {
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+.form-hint {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Combobox Styles */
+.combobox {
+  position: relative;
+  width: 100%;
+}
+
+.combobox-input {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.combobox-input:focus {
+  outline: none;
+  border-color: #3dd87a;
+}
+
+.combobox-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.combobox-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: var(--modal-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  margin-top: 4px;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.combobox-item {
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-primary);
+}
+
+.combobox-item:hover {
+  background: var(--btn-secondary-bg);
+}
+
+/* Scrollbar styling */
+.combobox-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.combobox-dropdown::-webkit-scrollbar-track {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.combobox-dropdown::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 3px;
+}
+
+/* Rest of your existing styles remain the same */
 .dark {
   --bg: #0e160f;
   --orb1: rgba(31, 92, 46, 0.5);
@@ -513,7 +900,6 @@ const closeModal = () => {
   font-size: 0.9rem;
 }
 
-/* Summary Cards */
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -581,7 +967,6 @@ const closeModal = () => {
   color: var(--text-primary);
 }
 
-/* Action Bar */
 .action-bar {
   display: flex;
   justify-content: space-between;
@@ -623,7 +1008,6 @@ const closeModal = () => {
   border-color: #3dd87a;
 }
 
-/* Table */
 .table-wrapper {
   overflow-x: auto;
   border-radius: 16px;
@@ -733,7 +1117,6 @@ const closeModal = () => {
   color: var(--text-muted);
 }
 
-/* Buttons */
 .btn {
   display: flex;
   align-items: center;
@@ -773,7 +1156,6 @@ const closeModal = () => {
   transform: translateY(-2px);
 }
 
-/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -878,7 +1260,6 @@ const closeModal = () => {
   border-top: 1px solid var(--border-color);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .content-wrapper {
     padding: 1rem;
