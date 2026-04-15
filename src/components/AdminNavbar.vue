@@ -52,9 +52,9 @@
         <transition name="dropdown-fade">
           <div v-if="isSuppliesDropdownOpen" class="supplies-dropdown-menu">
             <router-link 
-              to="/admin/supplies-request" 
+              to="/admin/supplies-req" 
               class="dropdown-item-link"
-              :class="{ active: isActive('/admin/supplies-request') }"
+              :class="{ active: isActive('/admin/supplies-req') }"
               @click="closeSuppliesDropdown"
             >
               <svg class="dropdown-item-icon" viewBox="0 0 24 24" fill="none">
@@ -108,7 +108,11 @@ const isActive = (path) => {
 }
 
 const isSuppliesActive = () => {
-  const suppliesPaths = ['/admin/manage-supplies', '/admin/supplies-request', '/admin/supplies-in', '/admin/supplies-summary']
+  const suppliesPaths = [
+    '/admin/supplies-req', 
+    '/admin/supplies-in', 
+    '/admin/supplies-summary'
+  ]
   return suppliesPaths.includes(route.path)
 }
 
