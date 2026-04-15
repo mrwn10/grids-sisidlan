@@ -10,12 +10,24 @@
       </div>
     </div>
 
-    <div class="header-right">z
+    <div class="header-right">
+      <!-- Logout Button -->
+      <button @click="handleLogout" class="logout-btn" title="Logout">
+        <svg class="logout-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        <span class="logout-text">Logout</span>
+      </button>
       
-      <!-- Theme Toggle Component -->
+      <!-- Theme Toggle Component - positioned inline in header -->
       <ThemeToggle 
         :theme="theme" 
+        :position="'custom'"
+        :custom-top="'0'"
+        :custom-right="'0'"
+        :fixed="false"
         @toggle-theme="handleToggleTheme"
+        class="header-theme-toggle"
       />
     </div>
   </header>
@@ -23,11 +35,12 @@
 
 <script setup>
 import { computed, inject } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import logoImage from '@/assets/images/logo.png'
 import ThemeToggle from './ThemeToggle.vue'
 
 const route = useRoute()
+const router = useRouter()
 const theme = inject('theme')
 const toggleTheme = inject('toggleTheme')
 
@@ -45,6 +58,15 @@ const handleToggleTheme = () => {
   if (toggleTheme) {
     toggleTheme()
   }
+}
+
+const handleLogout = () => {
+  // Clear authentication data from localStorage
+  localStorage.removeItem('token')
+  localStorage.removeItem('userRole')
+  
+  // Redirect to login page
+  router.push({ name: 'Login' })
 }
 </script>
 
@@ -108,32 +130,61 @@ const handleToggleTheme = () => {
   gap: 1.5rem;
 }
 
-.nav-links {
+/* Theme Toggle override styles for header */
+.header-theme-toggle {
+  position: relative !important;
+  width: 40px !important;
+  height: 40px !important;
+  margin: 0;
+  box-shadow: none !important;
+}
+
+.header-theme-toggle.dark {
+  background: rgba(31, 92, 46, 0.25);
+  border: 1px solid rgba(61, 216, 122, 0.3);
+}
+
+.header-theme-toggle.light {
+  background: rgba(31, 92, 46, 0.08);
+  border: 1px solid rgba(31, 92, 46, 0.2);
+}
+
+/* Logout Button Styles */
+.logout-btn {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-}
-
-.nav-word {
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
-  color: var(--text-secondary);
-  transition: color 0.2s ease;
-  cursor: default;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--bg-secondary);
 }
 
-.nav-word:hover {
-  color: var(--text-primary);
+.logout-btn:hover {
+  background: rgba(220, 53, 69, 0.1);
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.logout-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.logout-text {
+  display: inline-block;
 }
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .nav-links {
+  .header-right {
     gap: 1rem;
-  }
-  
-  .nav-word {
-    font-size: 0.8rem;
   }
 }
 
@@ -151,12 +202,21 @@ const handleToggleTheme = () => {
     font-size: 1rem;
   }
   
-  .nav-links {
+  .header-right {
+    gap: 0.75rem;
+  }
+  
+  .logout-text {
     display: none;
   }
   
-  .header-right {
-    gap: 1rem;
+  .logout-btn {
+    padding: 0.5rem;
+  }
+  
+  .header-theme-toggle {
+    width: 36px !important;
+    height: 36px !important;
   }
 }
 
@@ -174,6 +234,20 @@ const handleToggleTheme = () => {
   
   .page-title h2 {
     font-size: 0.9rem;
+  }
+  
+  .logout-btn {
+    padding: 0.4rem;
+  }
+  
+  .header-theme-toggle {
+    width: 34px !important;
+    height: 34px !important;
+  }
+  
+  .header-theme-toggle svg {
+    width: 14px !important;
+    height: 14px !important;
   }
 }
 </style>

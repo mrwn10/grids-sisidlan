@@ -1,7 +1,8 @@
 <template>
   <button 
     class="theme-toggle" 
-    :class="theme"
+    :class="[theme, positionClass]"
+    :style="customStyle"
     @click="$emit('toggle-theme')"
     :title="theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
   >
@@ -20,22 +21,126 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   theme: {
     type: String,
     required: true,
     validator: (value) => ['dark', 'light'].includes(value)
+  },
+  // Position preset: 'top-right', 'top-left', 'bottom-right', 'bottom-left', or 'custom'
+  position: {
+    type: String,
+    default: 'top-right',
+    validator: (value) => ['top-right', 'top-left', 'bottom-right', 'bottom-left', 'custom'].includes(value)
+  },
+  // Custom position values (only used when position='custom')
+  customTop: {
+    type: String,
+    default: null
+  },
+  customRight: {
+    type: String,
+    default: null
+  },
+  customBottom: {
+    type: String,
+    default: null
+  },
+  customLeft: {
+    type: String,
+    default: null
+  },
+  // Use fixed positioning instead of absolute
+  fixed: {
+    type: Boolean,
+    default: false
+  },
+  // Override default offset values
+  offsetTop: {
+    type: String,
+    default: '1.25rem'
+  },
+  offsetRight: {
+    type: String,
+    default: '1.25rem'
+  },
+  offsetBottom: {
+    type: String,
+    default: '1.25rem'
+  },
+  offsetLeft: {
+    type: String,
+    default: '1.25rem'
   }
 })
 
 defineEmits(['toggle-theme'])
+
+// Compute position class for presets
+const positionClass = computed(() => {
+  if (props.position !== 'custom') {
+    return `position-${props.position}`
+  }
+  return ''
+})
+
+// Compute custom styles
+const customStyle = computed(() => {
+  const positionType = props.fixed ? 'fixed' : 'absolute'
+  
+  // Handle preset positions with customizable offsets
+  if (props.position === 'top-right') {
+    return {
+      position: positionType,
+      top: props.offsetTop,
+      right: props.offsetRight
+    }
+  }
+  
+  if (props.position === 'top-left') {
+    return {
+      position: positionType,
+      top: props.offsetTop,
+      left: props.offsetLeft
+    }
+  }
+  
+  if (props.position === 'bottom-right') {
+    return {
+      position: positionType,
+      bottom: props.offsetBottom,
+      right: props.offsetRight
+    }
+  }
+  
+  if (props.position === 'bottom-left') {
+    return {
+      position: positionType,
+      bottom: props.offsetBottom,
+      left: props.offsetLeft
+    }
+  }
+  
+  // Handle custom position
+  if (props.position === 'custom') {
+    const styles = { position: positionType }
+    if (props.customTop) styles.top = props.customTop
+    if (props.customRight) styles.right = props.customRight
+    if (props.customBottom) styles.bottom = props.customBottom
+    if (props.customLeft) styles.left = props.customLeft
+    return styles
+  }
+  
+  // Fallback
+  return { position: positionType }
+})
 </script>
 
 <style scoped>
 .theme-toggle {
-  position: fixed;
-  top: 1.25rem;
-  right: 1.25rem;
+  /* No default positioning - will be set by props */
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -48,6 +153,31 @@ defineEmits(['toggle-theme'])
   transition: all 0.3s ease;
   z-index: 1000;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Preset position classes (fallbacks if no inline styles) */
+.position-top-right {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+}
+
+.position-top-left {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+}
+
+.position-bottom-right {
+  position: absolute;
+  bottom: 1.25rem;
+  right: 1.25rem;
+}
+
+.position-bottom-left {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 1.25rem;
 }
 
 /* Dark mode styles */
@@ -97,5 +227,18 @@ defineEmits(['toggle-theme'])
 .spin-leave-to {
   opacity: 0;
   transform: rotate(90deg) scale(0.5);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .theme-toggle {
+    width: 38px;
+    height: 38px;
+  }
+  
+  .theme-toggle svg {
+    width: 16px;
+    height: 16px;
+  }
 }
 </style>

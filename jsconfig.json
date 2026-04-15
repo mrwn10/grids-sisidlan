@@ -12,5 +12,10 @@
       "dom.iterable",
       "scripthost"
     ]
-  }
+  },
+  "exclude": [
+    "**/Sidebar.vue",
+    "node_modules",
+    "dist"
+  ]
 }
