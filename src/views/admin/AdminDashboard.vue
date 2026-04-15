@@ -12,7 +12,8 @@
         <div class="dashboard-card">
           <div class="card-grid"></div>
 
-          <div class="dashboard-header">
+          <!-- Changed from dashboard-header to dashboard-title-section -->
+          <div class="dashboard-title-section">
             <div class="logo-mark">
               <img :src="logoImage" alt="SISIDLAN Logo" class="logo-image" />
             </div>
@@ -123,7 +124,8 @@ const theme = inject('theme')
   min-height: 100vh;
   background: var(--bg);
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   transition: background 0.4s ease;
 }
 
@@ -131,12 +133,14 @@ const theme = inject('theme')
   margin-top: 70px;
   position: relative;
   min-height: calc(100vh - 70px);
+  width: 100%;
 }
 
 .content-wrapper {
   padding: 2rem;
   position: relative;
   min-height: calc(100vh - 70px);
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -206,7 +210,8 @@ const theme = inject('theme')
   border-radius: 24px;
   padding: 2.5rem 2.25rem;
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
+  margin: 0 auto;
   box-shadow: var(--card-shadow), 0 0 0 1px var(--card-inset) inset;
   overflow: hidden;
   transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
@@ -222,24 +227,24 @@ const theme = inject('theme')
   border-radius: inherit;
 }
 
-/* Header */
-.dashboard-header {
+/* Changed from .dashboard-header to .dashboard-title-section */
+.dashboard-title-section {
   text-align: center;
-  margin-bottom: 2.25rem;
+  margin-bottom: 2.5rem;
 }
 
 .logo-mark {
-  width: 80px;
-  height: 80px;
-  border-radius: 20px;
+  width: 100px;
+  height: 100px;
+  border-radius: 24px;
   background: linear-gradient(135deg, #1f5c2e, #3dd87a);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1.25rem;
+  margin: 0 auto 1.5rem;
   box-shadow: 0 8px 28px rgba(61, 216, 122, 0.35), 0 0 0 1px rgba(237, 255, 243, 0.1) inset;
   overflow: hidden;
-  padding: 12px;
+  padding: 16px;
 }
 
 .logo-image {
@@ -248,18 +253,18 @@ const theme = inject('theme')
   object-fit: contain;
 }
 
-.dashboard-header h1 {
-  font-size: 1.75rem;
+.dashboard-title-section h1 {
+  font-size: 2rem;
   font-weight: 700;
-  letter-spacing: 5px;
+  letter-spacing: 6px;
   color: var(--text-primary);
   text-shadow: 0 0 40px rgba(61, 216, 122, 0.2);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
   transition: color 0.3s;
 }
 
 .welcome-text {
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
   letter-spacing: 0.5px;
   transition: color 0.3s;
@@ -274,18 +279,18 @@ const theme = inject('theme')
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
 }
 
 .stat-card {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
+  padding: 1.25rem;
   background: var(--stat-bg);
   border: 1px solid var(--stat-border);
-  border-radius: 16px;
+  border-radius: 20px;
   transition: all 0.25s ease;
   cursor: pointer;
 }
@@ -297,8 +302,8 @@ const theme = inject('theme')
 }
 
 .stat-icon {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   color: #3dd87a;
   flex-shrink: 0;
 }
@@ -309,16 +314,16 @@ const theme = inject('theme')
 }
 
 .stat-info h3 {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-secondary);
   letter-spacing: 1px;
   text-transform: uppercase;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.35rem;
 }
 
 .stat-info p {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -326,20 +331,50 @@ const theme = inject('theme')
 /* Responsive */
 @media (max-width: 768px) {
   .content-wrapper {
-    padding: 1rem;
+    padding: 1.5rem;
   }
   
   .dashboard-card {
-    padding: 2rem 1.5rem;
+    padding: 1.5rem;
+    max-width: 100%;
   }
   
   .logo-mark {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
+  }
+  
+  .dashboard-title-section h1 {
+    font-size: 1.5rem;
+    letter-spacing: 4px;
   }
   
   .stats-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+  }
+  
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .stat-info p {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .dashboard-card {
+    max-width: 700px;
+  }
+  
+  .stats-grid {
+    gap: 1rem;
   }
 }
 </style>
